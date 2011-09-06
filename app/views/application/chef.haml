@@ -1,0 +1,147 @@
+%h2
+  Cooking on the cloud with Chef.
+%hr
+
+%div
+  %p
+    Chef is an awesome tool to cook nodes on the cloud.
+    This article will walkthrough creating and bootstrapping
+    a chef ready node on Amazon.
+
+%hr
+
+%div.alert-message.block-message.error
+  %h3
+    Setup
+  %hr
+
+  %p
+    Signup for an
+    = link_to 'Opscode', 'http://opscode.com'
+    account.
+  %br
+  %p
+    Download your organizations validation key.
+    %pre= 'mv <organization-key-path> /etc/chef'
+  %p
+    Download your client private key.
+    %pre= 'mv <client-key-path> /etc/chef'
+  %p
+    Download your knife configuration file.
+    %pre= 'mv <knife-configuration-file-path> /etc/chef'
+
+%hr
+
+%div.alert-message.block-message.error
+  %h3
+    Chef Installation
+    %p
+      %pre= 'gem install chef'
+
+%hr
+
+%div.alert-message.block-message.warning
+  %h3
+    Knife Usage
+    %p
+      %pre= "knife --color --verbose --config=<configuration-file-path> <command>"
+
+%hr
+
+%div.alert-message.block-message.error
+  %h3
+    Knife Amazon Tools Installation
+    %p
+      %pre= "gem install knife-ec2"
+
+%hr
+
+%div.alert-message.block-message.error
+  %h3
+    Server Creation
+  %hr
+
+  %div
+    %p
+      Signup for an
+      = link_to 'Amazon', 'http://aws.amazon.com'
+      account.
+    %br
+    %p
+      Add your Amazon credentials to the knife configuration.
+      %p
+        %pre= 'knife[:aws_access_key_id] = <aws-access-key-id>'
+        %pre= 'knife[:aws_secret_access_key] = <aws-secret-access-key>'
+        %pre= 'knife[:aws_ssh_key_id] = <aws-ssh-key-id>'
+    %p
+      Create a server instance.
+      %p
+        %pre
+          = 'knife ec2 server create --color --verbose --config=<knife-configuration-file-path> --node-name=WebServer --image=<image-name> --flavor=<flavor> --template=<template-file-path> --ssh-user=ubuntu --identity-file=<identity-file-path>'
+%hr
+
+%div.alert-message.block-message.info
+  %h3
+    Example
+  %hr
+
+  %div
+    %p
+      The Ubuntu Lucid Lynx AMI is well supported (The t1.micro instance qualifies for the free tier).
+    %p
+      %pre
+        = 'knife ec2 server create --color --verbose --config=<knife-configuration-file-path> --node-name=WebServer --image=ami-63be790a --flavor=t1.micro --template=<template-file-path> --ssh-user=ubuntu --identity-file=<identity-file-path>'
+%hr
+
+%div.alert-message.block-message.warning
+  %h3
+    Access Configuration.
+  %hr
+
+  %p
+    Add the new node to the SSH configuration file.
+  %p
+    %pre Host personal
+    %pre HostName ec2-67-202-21-39.compute-1.amazonaws.com
+    %pre User ubuntu
+    %pre IdentityFile ~/.ssh/personal.pem
+    %pre Compression yes
+  %hr
+
+%div.alert-message.block-message.warning
+  %h3
+    Server Bootstrap
+  %hr
+
+  %p
+    If you have an existing Amazon node, you can bootstrap
+    it and skip the creation process.
+    %p
+      %pre
+        = 'knife bootstrap <ssh-node-name> --color --verbose --config=<configuration-file-path> --ssh-user=<ssh-user> --identity-file=<identity-file-path>'
+%hr
+
+%div.alert-message.block-message.success
+  %h3
+    Example Bootstrap Output
+  %hr
+
+  %p
+    %pre= 'Instance ID: <instance-id>'
+    %pre= 'Flavor: t1.micro'
+    %pre= 'Image: ami-63be790a'
+    %pre= 'Region: us-east-1'
+    %pre= 'Availability Zone: us-east-1b'
+    %pre= 'Security Groups: default'
+    %pre= 'SSH Key: Personal'
+    %pre= 'Root Device Type: ebs'
+    %pre= 'Root Volume ID: <root-volume-id>'
+    %pre= 'Root Device Name: /dev/sda1'
+    %pre= 'Root Device Delete on Terminate: true'
+    %pre= 'Public DNS Name: <public-dns-name>'
+    %pre= 'Public IP Address: <public-ip-address>'
+    %pre= 'Private DNS Name: <private-dns-name>'
+    %pre= 'Private IP Address: <private-ip-address>'
+    %pre= 'Environment: <environment>'
+
+%hr
